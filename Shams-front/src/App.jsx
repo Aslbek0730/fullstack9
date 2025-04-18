@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
@@ -15,105 +14,129 @@ import Forum from './pages/Forum';
 import Profile from './pages/Profile';
 import MyCourses from './pages/MyCourses';
 import AIAssistant from './pages/AIAssistant';
+import Payments from './pages/Payments';
+import Settings from './pages/Settings';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import './App.css';
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+// Protected Route wrapper component
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
 
-  // Protected Route wrapper component
-  const ProtectedRoute = ({ children }) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" />;
-    }
-    return children;
-  };
+  if (loading) {
+    return <div className="loading">Yuklanmoqda...</div>;
+  }
 
-  // Layout wrapper for authenticated routes
-  const AuthLayout = ({ children }) => (
-    <div className="app-container">
-      <Sidebar />
-      <div className="main-content">
-        <Navbar />
-        {children}
-        <Footer />
-      </div>
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
+
+// Layout wrapper for authenticated routes
+const AuthLayout = ({ children }) => (
+  <div className="app-container">
+    <Sidebar />
+    <div className="main-content">
+      <Navbar />
+      {children}
+      <Footer />
     </div>
-  );
+  </div>
+);
 
+function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/register" element={<Register />} />
+    <AuthProvider>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Protected routes */}
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <Dashboard />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/courses" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <Courses />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/course/:id" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <CourseDetails />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/library" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <Library />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/tests" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <Tests />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/forum" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <Forum />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/profile" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <Profile />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/my-courses" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <MyCourses />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-        <Route path="/ai-assistant" element={
-          <ProtectedRoute>
-            <AuthLayout>
-              <AIAssistant />
-            </AuthLayout>
-          </ProtectedRoute>
-        } />
-      </Routes>
-    </Router>
+          {/* Protected routes */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <Dashboard />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/courses" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <Courses />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/course/:id" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <CourseDetails />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/library" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <Library />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/tests" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <Tests />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/forum" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <Forum />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <Profile />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/my-courses" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <MyCourses />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/ai-assistant" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <AIAssistant />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/payments" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <Payments />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+          <Route path="/settings" element={
+            <ProtectedRoute>
+              <AuthLayout>
+                <Settings />
+              </AuthLayout>
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

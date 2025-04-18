@@ -1,62 +1,69 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import './Auth.css';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import './Login.css';
 
-function Login({ setIsAuthenticated }) {
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your authentication logic here
-    setIsAuthenticated(true);
-    navigate('/dashboard');
-  };
+    setError('');
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    try {
+      // Here you would typically make an API call to your backend
+      // For now, we'll just simulate a successful login
+      const userData = {
+        id: '1',
+        email: email,
+        name: 'Test User',
+        role: 'student'
+      };
+      
+      login(userData);
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Login failed. Please check your credentials.');
+    }
   };
 
   return (
-    <div className="public-container">
-      <div className="auth-container">
-        <div className="auth-card">
-          <h2>Tizimga kirish</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Parol</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <button type="submit" className="btn btn-primary w-100">Kirish</button>
-          </form>
-          <p className="auth-footer">
-            Hisobingiz yo`qmi? <Link to="/register">Ro`yxatdan o`tish</Link>
-          </p>
-        </div>
+    <div className="login-container">
+      <div className="login-form">
+        <h2>Kirish</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Parol</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="login-btn">
+            Kirish
+          </button>
+        </form>
+        <p className="register-link">
+          Ro&apos;yxatdan o&apos;tmaganmisiz? <a href="/register">Ro&apos;yxatdan o&apos;tish</a>
+        </p>
       </div>
     </div>
   );

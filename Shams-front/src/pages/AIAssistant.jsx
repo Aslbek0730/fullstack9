@@ -1,89 +1,106 @@
-import { useState, useRef, useEffect } from 'react';
-import { BsSend, BsRobot, BsPerson } from 'react-icons/bs';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
 import './AIAssistant.css';
 
-function AIAssistant() {
-  const [message, setMessage] = useState('');
-  const [chat, setChat] = useState([
+const AIHelper = () => {
+  const [messages, setMessages] = useState([
     {
-      type: 'ai',
-      text: "Salom! Men sizning shaxsiy AI o'qituvchingizman. Qanday yordam bera olaman?"
+      id: 1,
+      text: 'Salom! Men sizga yordam berishdan xursandman. Savolingizni yozing...',
+      sender: 'ai',
+      timestamp: new Date()
     }
   ]);
-  const chatEndRef = useRef(null);
+  const [inputValue, setInputValue] = useState('');
+  const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [chat]);
+  }, [messages]);
 
-  const handleSubmit = (e) => {
+  const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!inputValue.trim()) return;
 
-    // Add user message to chat
-    const newChat = [...chat, { type: 'user', text: message }];
-    
-    // Simulate AI response (replace with actual AI integration)
-    const aiResponse = {
-      type: 'ai',
-      text: "Men sizga yordam berishga tayyorman. Hozircha bu test javob, keyinchalik haqiqiy AI bilan almashtiriladi."
+    // Add user message
+    const userMessage = {
+      id: messages.length + 1,
+      text: inputValue,
+      sender: 'user',
+      timestamp: new Date()
     };
-    
-    setChat([...newChat, aiResponse]);
-    setMessage('');
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+
+    // Simulate AI response after a short delay
+    setTimeout(() => {
+      const aiResponse = {
+        id: messages.length + 2,
+        text: 'Bu yerda AI javobi bo\'ladi. Haqiqiy API integratsiyasi qo\'shilganda, bu yerda AI dan kelgan javob ko\'rsatiladi.',
+        sender: 'ai',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, aiResponse]);
+    }, 1000);
+  };
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
-    <div className="ai-assistant">
-      <div className="chat-header">
-        <div className="ai-assistant-info">
-          <BsRobot className="ai-icon" />
-          <div>
-            <h2>Sun'iy Intellekt Yordamchi</h2>
-            <p>24/7 shaxsiy AI o'qituvchingiz</p>
-          </div>
+    <div className="ai-helper-container">
+      <div className="ai-helper-header">
+        <h1>AI Yordamchi</h1>
+        <div className="ai-status">
+          <span className="status-dot"></span>
+          <span>Online</span>
         </div>
       </div>
-      
+
       <div className="chat-container">
-        <div className="chat-messages">
-          {chat.map((msg, index) => (
-            <div key={index} className={`message ${msg.type}`}>
+        <div className="messages-container">
+          {messages.map(message => (
+            <div 
+              key={message.id} 
+              className={`message ${message.sender === 'user' ? 'user-message' : 'ai-message'}`}
+            >
               <div className="message-icon">
-                {msg.type === 'ai' ? <BsRobot /> : <BsPerson />}
+                {message.sender === 'user' ? <FaUser /> : <FaRobot />}
               </div>
               <div className="message-content">
-                {msg.text}
+                <p>{message.text}</p>
+                <span className="message-time">{formatTime(message.timestamp)}</span>
               </div>
             </div>
           ))}
-          <div ref={chatEndRef} />
+          <div ref={messagesEndRef} />
         </div>
-        
-        <form onSubmit={handleSubmit} className="message-form">
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+
+        <form className="input-container" onSubmit={handleSendMessage}>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             placeholder="Savolingizni yozing..."
-            rows="3"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              }
-            }}
+            className="message-input"
           />
-          <button type="submit" className="send-button" disabled={!message.trim()}>
-            <BsSend />
+          <button 
+            type="submit" 
+            className="send-button"
+            disabled={!inputValue.trim()}
+          >
+            <FaPaperPlane />
           </button>
         </form>
       </div>
     </div>
   );
-}
+};
 
-export default AIAssistant;
+export default AIHelper; 

@@ -1,21 +1,136 @@
+/* Base styles */
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #1e40af;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --background-light: #f8fafc;
+  --background-white: #ffffff;
+  --border-color: #e5e7eb;
+  --sidebar-width: 250px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--background-light);
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-primary);
+}
+
+/* App container */
 .app-container {
   display: flex;
   min-height: 100vh;
+  background: var(--background-light);
 }
 
+/* Main content area */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 250px; /* Width of sidebar */
+  margin-left: var(--sidebar-width);
+  background: var(--background-light);
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+/* Content wrapper */
+.content-wrapper {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Page header */
+.page-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Card styles */
+.content-card {
+  background: var(--background-white);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+/* Grid layout */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .content-wrapper {
+    padding: 1.5rem;
+  }
+  
+  .grid-container {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .content-wrapper {
+    padding: 1rem;
+  }
+  
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .content-card {
+    padding: 1.5rem;
+  }
 }
 
 /* Public routes container */
 .public-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   width: 100%;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
+  background: var(--background-light);
+  min-height: 100vh;
+}
+
+/* Navbar styles */
+.navbar {
+  background: var(--background-white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2rem;
+}
+
+/* Footer styles */
+.footer {
+  background: var(--background-white);
+  padding: 2rem 0;
+  margin-top: auto;
+  border-top: 1px solid var(--border-color);
 }
 
 /* Import Bootstrap CSS */

@@ -1,50 +1,130 @@
 .sidebar {
   width: 250px;
+  background: var(--background-white);
   height: 100vh;
-  background-color: #2f3640;
   position: fixed;
   left: 0;
   top: 0;
-  color: white;
-  padding: 2rem 0;
-}
-
-.sidebar-content {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  z-index: 100;
 }
 
-.sidebar-item {
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 1rem 0;
+  overflow-y: auto;
+}
+
+.menu-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 2rem;
-  color: white;
+  padding: 0.75rem 1.5rem;
+  color: var(--text-secondary);
   text-decoration: none;
-  transition: background-color 0.3s;
+  transition: all 0.2s ease;
+  margin: 0.25rem 0;
 }
 
-.sidebar-item:hover {
-  background-color: #353b48;
+.menu-item:hover {
+  background: var(--background-light);
+  color: var(--primary-color);
+}
+
+.menu-item.active {
+  background: var(--primary-color);
   color: white;
 }
 
-.sidebar-item.active {
-  background-color: #353b48;
-  border-left: 4px solid #ff4757;
+.menu-item.active:hover {
+  background: var(--secondary-color);
 }
 
-.sidebar-item svg {
-  font-size: 1.2rem;
+.menu-icon {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+  width: 24px;
+  text-align: center;
 }
 
-.logout {
-  margin-top: auto;
-  color: #ff4757;
+.menu-text {
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
-.logout:hover {
-  background-color: #ff4757;
-  color: white;
+.sidebar-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0.5rem;
+}
+
+.logout-button:hover {
+  background: var(--background-light);
+  color: #dc2626;
+}
+
+.logout-icon {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    box-shadow: none;
+  }
+  
+  .sidebar-menu {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0.5rem;
+  }
+  
+  .menu-item {
+    flex: 1 1 auto;
+    min-width: 120px;
+    justify-content: center;
+    padding: 0.75rem;
+    margin: 0.25rem;
+    border-radius: 0.5rem;
+  }
+  
+  .menu-text {
+    display: none;
+  }
+  
+  .menu-icon {
+    margin-right: 0;
+    font-size: 1.5rem;
+  }
 }

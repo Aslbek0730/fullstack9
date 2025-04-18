@@ -1,46 +1,70 @@
-import { NavLink } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { 
-  BsHouseDoor,
-  BsBook,
-  BsCollection,
-  BsRobot,
-  BsChatDots,
+  BsHouse, 
+  BsBook, 
+  BsCollection, 
   BsClipboardCheck,
+  BsRobot,
   BsPerson,
+  BsCreditCard,
+  BsGear,
   BsBoxArrowRight
 } from 'react-icons/bs';
+import LogoutModal from './LogoutModal';
 import './Sidebar.css';
 
 function Sidebar() {
+  const location = useLocation();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const menuItems = [
+    { path: '/dashboard', icon: <BsHouse />, text: 'Bosh sahifa' },
+    { path: '/courses', icon: <BsBook />, text: 'Kurslar' },
+    { path: '/library', icon: <BsCollection />, text: 'Kutubxona' },
+    { path: '/tests', icon: <BsClipboardCheck />, text: 'Testlar' },
+    { path: '/ai-assistant', icon: <BsRobot />, text: 'AI Yordamchi' },
+    { path: '/profile', icon: <BsPerson />, text: 'Profil' },
+    { path: '/payments', icon: <BsCreditCard />, text: 'To\'lovlar' },
+    { path: '/settings', icon: <BsGear />, text: 'Sozlamalar' }
+  ];
+
   return (
-    <div className="sidebar">
-      <div className="sidebar-content">
-        <NavLink to="/dashboard" className="sidebar-item">
-          <BsHouseDoor /> <span>Dashboard</span>
-        </NavLink>
-        <NavLink to="/my-courses" className="sidebar-item">
-          <BsBook /> <span>Mening Kurslarim</span>
-        </NavLink>
-        <NavLink to="/library" className="sidebar-item">
-          <BsCollection /> <span>Kutubxona</span>
-        </NavLink>
-        <NavLink to="/ai-assistant" className="sidebar-item">
-          <BsRobot /> <span>Sun'iy Intellekt</span>
-        </NavLink>
-        <NavLink to="/forum" className="sidebar-item">
-          <BsChatDots /> <span>Forum</span>
-        </NavLink>
-        <NavLink to="/tests" className="sidebar-item">
-          <BsClipboardCheck /> <span>Testlar</span>
-        </NavLink>
-        <NavLink to="/profile" className="sidebar-item">
-          <BsPerson /> <span>Profil</span>
-        </NavLink>
-        <NavLink to="/login" className="sidebar-item logout">
-          <BsBoxArrowRight /> <span>Chiqish</span>
-        </NavLink>
+    <>
+      <div className="sidebar">
+        <div className="sidebar-header">
+          <h3>Shams Akademiyasi</h3>
+        </div>
+        
+        <div className="sidebar-menu">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`menu-item ${location.pathname === item.path ? 'active' : ''}`}
+            >
+              <span className="menu-icon">{item.icon}</span>
+              <span className="menu-text">{item.text}</span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="sidebar-footer">
+          <button 
+            className="logout-button"
+            onClick={() => setShowLogoutModal(true)}
+          >
+            <span className="logout-icon"><BsBoxArrowRight /></span>
+            <span className="menu-text">Chiqish</span>
+          </button>
+        </div>
       </div>
-    </div>
+
+      <LogoutModal 
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+      />
+    </>
   );
 }
 
