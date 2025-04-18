@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import './Login.css';
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ function Login() {
       // For now, we'll just simulate a successful login
       const userData = {
         id: '1',
-        email: email,
+        username: username,
         name: 'Test User',
         role: 'student'
       };
@@ -38,12 +38,12 @@ function Login() {
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="username">Foydalanuvchi nomi</label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
