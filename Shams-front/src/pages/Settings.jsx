@@ -1,175 +1,152 @@
-import { useState } from 'react';
-import { FaMoon, FaSun, FaBell, FaLock, FaShieldAlt } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaGlobe, FaBell, FaMoon, FaSun, FaLock, FaCheck } from 'react-icons/fa';
 import './Settings.css';
+import '../styles/shared.css';
 
 const Settings = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [language, setLanguage] = useState('uz');
-  const [notifications, setNotifications] = useState({
-    email: true,
-    courseUpdates: true,
-    promotions: false
-  });
-  const [privacySettings, setPrivacySettings] = useState({
-    twoFactorAuth: false,
-    showProfile: true,
-    showCourses: true
+  const [settings, setSettings] = useState({
+    language: 'uz',
+    emailNotifications: true,
+    darkMode: false,
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   });
 
-  const languages = [
-    { code: 'uz', name: 'O\'zbekcha' },
-    { code: 'ru', name: 'Русский' },
-    { code: 'en', name: 'English' }
-  ];
+  const [passwordChanged, setPasswordChanged] = useState(false);
 
-  const handleNotificationChange = (type) => {
-    setNotifications(prev => ({
+  const handleSettingChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setSettings(prev => ({
       ...prev,
-      [type]: !prev[type]
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
-  const handlePrivacyChange = (type) => {
-    setPrivacySettings(prev => ({
-      ...prev,
-      [type]: !prev[type]
-    }));
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    // Here you would typically make an API call to change the password
+    console.log('Password change submitted:', settings);
+    setPasswordChanged(true);
+    setTimeout(() => setPasswordChanged(false), 3000);
   };
 
   return (
-    <div className="settings-container">
-      <h1>Sozlamalar</h1>
-      
-      {/* Appearance Settings */}
-      <section className="settings-section">
-        <h2>Ko`rinish</h2>
-        <div className="setting-item">
-          <div className="setting-label">
-            <FaMoon className="setting-icon" />
-            <span>Qorong`u rejim</span>
-          </div>
-          <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={isDarkMode}
-              onChange={() => setIsDarkMode(!isDarkMode)}
-            />
-            <span className="toggle-slider"></span>
-          </label>
+    <div className="page-container">
+      <h1 className="page-title">Sozlamalar</h1>
+
+      <div className="settings-section">
+        <div className="section-header">
+          <FaGlobe />
+          <h3>Til</h3>
         </div>
-        
-        <div className="setting-item">
-          <div className="setting-label">
-            <span>Til</span>
-          </div>
-          <select 
-            className="language-select"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+        <div className="section-content">
+          <select
+            name="language"
+            value={settings.language}
+            onChange={handleSettingChange}
+            className="form-input"
           >
-            {languages.map(lang => (
-              <option key={lang.code} value={lang.code}>
-                {lang.name}
-              </option>
-            ))}
+            <option value="uz">O&apos;zbek</option>
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
           </select>
         </div>
-      </section>
+      </div>
 
-      {/* Notification Settings */}
-      <section className="settings-section">
-        <h2>Bildirishnomalar</h2>
-        <div className="setting-item">
-          <div className="setting-label">
-            <FaBell className="setting-icon" />
-            <span>Email bildirishnomalar</span>
-          </div>
+      <div className="settings-section">
+        <div className="section-header">
+          <FaBell />
+          <h3>Bildirishnomalar</h3>
+        </div>
+        <div className="section-content">
           <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={notifications.email}
-              onChange={() => handleNotificationChange('email')}
+            <input
+              type="checkbox"
+              name="emailNotifications"
+              checked={settings.emailNotifications}
+              onChange={handleSettingChange}
             />
             <span className="toggle-slider"></span>
+            <span className="toggle-label">Email bildirishnomalar</span>
           </label>
         </div>
-        
-        <div className="setting-item">
-          <div className="setting-label">
-            <span>Kurs yangilanishlari</span>
-          </div>
-          <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={notifications.courseUpdates}
-              onChange={() => handleNotificationChange('courseUpdates')}
-            />
-            <span className="toggle-slider"></span>
-          </label>
-        </div>
-        
-        <div className="setting-item">
-          <div className="setting-label">
-            <span>Promo-aksiyalar</span>
-          </div>
-          <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={notifications.promotions}
-              onChange={() => handleNotificationChange('promotions')}
-            />
-            <span className="toggle-slider"></span>
-          </label>
-        </div>
-      </section>
+      </div>
 
-      {/* Privacy Settings */}
-      <section className="settings-section">
-        <h2>Maxfiylik</h2>
-        <div className="setting-item">
-          <div className="setting-label">
-            <FaLock className="setting-icon" />
-            <span>Ikki faktorli autentifikatsiya</span>
-          </div>
+      <div className="settings-section">
+        <div className="section-header">
+          {settings.darkMode ? <FaMoon /> : <FaSun />}
+          <h3>Mavzu</h3>
+        </div>
+        <div className="section-content">
           <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={privacySettings.twoFactorAuth}
-              onChange={() => handlePrivacyChange('twoFactorAuth')}
+            <input
+              type="checkbox"
+              name="darkMode"
+              checked={settings.darkMode}
+              onChange={handleSettingChange}
             />
             <span className="toggle-slider"></span>
+            <span className="toggle-label">Qorong&apos;u mavzu</span>
           </label>
         </div>
-        
-        <div className="setting-item">
-          <div className="setting-label">
-            <FaShieldAlt className="setting-icon" />
-            <span>Profilni ko`rsatish</span>
-          </div>
-          <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={privacySettings.showProfile}
-              onChange={() => handlePrivacyChange('showProfile')}
-            />
-            <span className="toggle-slider"></span>
-          </label>
+      </div>
+
+      <div className="settings-section">
+        <div className="section-header">
+          <FaLock />
+          <h3>Parolni o&apos;zgartirish</h3>
         </div>
-        
-        <div className="setting-item">
-          <div className="setting-label">
-            <span>Kurslarni ko`rsatish</span>
-          </div>
-          <label className="toggle-switch">
-            <input 
-              type="checkbox" 
-              checked={privacySettings.showCourses}
-              onChange={() => handlePrivacyChange('showCourses')}
-            />
-            <span className="toggle-slider"></span>
-          </label>
+        <div className="section-content">
+          <form onSubmit={handlePasswordSubmit} className="password-form">
+            <div className="form-group">
+              <label className="form-label">Joriy parol</label>
+              <input
+                type="password"
+                name="currentPassword"
+                value={settings.currentPassword}
+                onChange={handleSettingChange}
+                placeholder="Joriy parolni kiriting"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Yangi parol</label>
+              <input
+                type="password"
+                name="newPassword"
+                value={settings.newPassword}
+                onChange={handleSettingChange}
+                placeholder="Yangi parolni kiriting"
+                className="form-input"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Yangi parolni tasdiqlang</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={settings.confirmPassword}
+                onChange={handleSettingChange}
+                placeholder="Yangi parolni qayta kiriting"
+                className="form-input"
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary">
+              {passwordChanged ? (
+                <>
+                  <FaCheck /> Saqlandi
+                </>
+              ) : (
+                'Parolni o&apos;zgartirish'
+              )}
+            </button>
+          </form>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

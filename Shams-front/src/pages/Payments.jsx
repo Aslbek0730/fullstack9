@@ -1,67 +1,33 @@
 import React, { useState } from 'react';
-import { FaCreditCard, FaUser, FaCalendar, FaLock, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCreditCard, FaHistory, FaBook, FaPlus, FaLock, FaCalendarAlt, FaUser } from 'react-icons/fa';
+import { SiVisa, SiMastercard } from 'react-icons/si';
 import './Payments.css';
 
 const Payments = () => {
   const [activeTab, setActiveTab] = useState('courses');
   const [cardForm, setCardForm] = useState({
     cardNumber: '',
-    cardHolder: '',
+    cardholderName: '',
     expiryDate: '',
-    cvv: ''
+    cvv: '',
+    cardType: 'visa'
   });
 
-  // Sample paid courses data
+  // Sample data for paid courses
   const paidCourses = [
-    {
-      id: 1,
-      name: 'Python asoslari',
-      price: '299,000',
-      purchaseDate: '2024-01-15',
-      status: 'active'
-    },
-    {
-      id: 2,
-      name: 'Web dasturlash',
-      price: '399,000',
-      purchaseDate: '2024-02-01',
-      status: 'active'
-    },
-    {
-      id: 3,
-      name: 'Ma\'lumotlar bazasi',
-      price: '249,000',
-      purchaseDate: '2024-02-20',
-      status: 'expired'
-    }
+    { id: 1, name: 'Python Dasturlash Asoslari', price: '299,000', date: '2024-01-15', status: 'paid' },
+    { id: 2, name: 'Web Dasturlash', price: '399,000', date: '2024-02-01', status: 'paid' },
+    { id: 3, name: 'Ma\'lumotlar Bazasi', price: '249,000', date: '2024-02-20', status: 'pending' }
   ];
 
-  // Sample billing history data
+  // Sample data for billing history
   const billingHistory = [
-    {
-      id: 1,
-      date: '2024-02-20',
-      description: 'Ma\'lumotlar bazasi kursi',
-      amount: '249,000',
-      status: 'completed'
-    },
-    {
-      id: 2,
-      date: '2024-02-01',
-      description: 'Web dasturlash kursi',
-      amount: '399,000',
-      status: 'completed'
-    },
-    {
-      id: 3,
-      date: '2024-01-15',
-      description: 'Python asoslari kursi',
-      amount: '299,000',
-      status: 'completed'
-    }
+    { id: 1, course: 'Python Dasturlash Asoslari', amount: '299,000', date: '2024-01-15', status: 'completed' },
+    { id: 2, course: 'Web Dasturlash', amount: '399,000', date: '2024-02-01', status: 'completed' },
+    { id: 3, course: 'Ma\'lumotlar Bazasi', amount: '249,000', date: '2024-02-20', status: 'pending' }
   ];
 
-  const handleCardChange = (e) => {
+  const handleCardFormChange = (e) => {
     const { name, value } = e.target;
     setCardForm(prev => ({
       ...prev,
@@ -71,163 +37,160 @@ const Payments = () => {
 
   const handleCardSubmit = (e) => {
     e.preventDefault();
-    // Handle card submission
-    console.log('Card submitted:', cardForm);
+    // Here you would typically make an API call to save the card
+    console.log('Card form submitted:', cardForm);
   };
 
   return (
     <div className="payments-container">
-      <h1>To`lovlar</h1>
-
-      <div className="payments-tabs">
-        <button
-          className={`tab-btn ${activeTab === 'courses' ? 'active' : ''}`}
-          onClick={() => setActiveTab('courses')}
-        >
-          Kurslar
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'card' ? 'active' : ''}`}
-          onClick={() => setActiveTab('card')}
-        >
-          Karta
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
-          onClick={() => setActiveTab('history')}
-        >
-          Tarix
-        </button>
+      <div className="payments-header">
+        <h2>To'lovlar</h2>
+        <div className="tabs">
+          <button 
+            className={`tab-btn ${activeTab === 'courses' ? 'active' : ''}`}
+            onClick={() => setActiveTab('courses')}
+          >
+            <FaBook /> Kurslar
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'card' ? 'active' : ''}`}
+            onClick={() => setActiveTab('card')}
+          >
+            <FaCreditCard /> Karta
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
+            onClick={() => setActiveTab('history')}
+          >
+            <FaHistory /> Tarix
+          </button>
+        </div>
       </div>
 
-      <div className="payments-content">
-        {activeTab === 'courses' && (
-          <div className="courses-list">
+      {activeTab === 'courses' && (
+        <div className="courses-section">
+          <div className="courses-grid">
             {paidCourses.map(course => (
               <div key={course.id} className="course-card">
-                <div className="course-info">
-                  <h3>{course.name}</h3>
-                  <p className="course-price">{course.price} so`m</p>
-                  <p className="course-date">Sotib olingan: {course.purchaseDate}</p>
+                <h3>{course.name}</h3>
+                <div className="course-details">
+                  <span className="price">{course.price} so'm</span>
+                  <span className={`status ${course.status}`}>
+                    {course.status === 'paid' ? 'To\'langan' : 'Kutilmoqda'}
+                  </span>
                 </div>
-                <div className={`course-status ${course.status}`}>
-                  {course.status === 'active' ? 'Faol' : 'Muddati tugagan'}
+                <div className="course-date">
+                  <FaCalendarAlt /> {course.date}
                 </div>
               </div>
             ))}
           </div>
-        )}
+        </div>
+      )}
 
-        {activeTab === 'card' && (
-          <div className="card-form-container">
-            <form onSubmit={handleCardSubmit} className="card-form">
-              <div className="form-group">
-                <label>
-                  <FaCreditCard />
-                  Karta raqami
-                </label>
+      {activeTab === 'card' && (
+        <div className="card-section">
+          <form onSubmit={handleCardSubmit} className="card-form">
+            <div className="form-group">
+              <label>
+                <FaCreditCard /> Karta raqami
+              </label>
+              <div className="card-input">
                 <input
                   type="text"
                   name="cardNumber"
                   value={cardForm.cardNumber}
-                  onChange={handleCardChange}
+                  onChange={handleCardFormChange}
                   placeholder="1234 5678 9012 3456"
                   maxLength="19"
+                />
+                <div className="card-icons">
+                  <SiVisa className={cardForm.cardType === 'visa' ? 'active' : ''} />
+                  <SiMastercard className={cardForm.cardType === 'mastercard' ? 'active' : ''} />
+                </div>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>
+                <FaUser /> Karta egasi
+              </label>
+              <input
+                type="text"
+                name="cardholderName"
+                value={cardForm.cardholderName}
+                onChange={handleCardFormChange}
+                placeholder="Karta egasining ismi"
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label>
+                  <FaCalendarAlt /> Amal qilish muddati
+                </label>
+                <input
+                  type="text"
+                  name="expiryDate"
+                  value={cardForm.expiryDate}
+                  onChange={handleCardFormChange}
+                  placeholder="MM/YY"
+                  maxLength="5"
                 />
               </div>
 
               <div className="form-group">
                 <label>
-                  <FaUser />
-                  Karta egasi
+                  <FaLock /> CVV
                 </label>
                 <input
                   type="text"
-                  name="cardHolder"
-                  value={cardForm.cardHolder}
-                  onChange={handleCardChange}
-                  placeholder="Ism Familiya"
+                  name="cvv"
+                  value={cardForm.cvv}
+                  onChange={handleCardFormChange}
+                  placeholder="123"
+                  maxLength="3"
                 />
               </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>
-                    <FaCalendar />
-                    Amal qilish muddati
-                  </label>
-                  <input
-                    type="text"
-                    name="expiryDate"
-                    value={cardForm.expiryDate}
-                    onChange={handleCardChange}
-                    placeholder="MM/YY"
-                    maxLength="5"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>
-                    <FaLock />
-                    CVV
-                  </label>
-                  <input
-                    type="text"
-                    name="cvv"
-                    value={cardForm.cvv}
-                    onChange={handleCardChange}
-                    placeholder="123"
-                    maxLength="3"
-                  />
-                </div>
-              </div>
-
-              <button type="submit" className="save-card-btn">
-                Kartani saqlash
-              </button>
-            </form>
-          </div>
-        )}
-
-        {activeTab === 'history' && (
-          <div className="billing-history">
-            <div className="table-container">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Sana</th>
-                    <th>Tavsif</th>
-                    <th>Summa</th>
-                    <th>Holat</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {billingHistory.map(transaction => (
-                    <tr key={transaction.id}>
-                      <td>{transaction.date}</td>
-                      <td>{transaction.description}</td>
-                      <td>{transaction.amount} so`m</td>
-                      <td>
-                        <span className={`status-badge ${transaction.status}`}>
-                          {transaction.status === 'completed' ? (
-                            <>
-                              <FaCheck /> To`langan
-                            </>
-                          ) : (
-                            <>
-                              <FaTimes /> Bekor qilingan
-                            </>
-                          )}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
+
+            <button type="submit" className="save-card-btn">
+              <FaPlus /> Kartani saqlash
+            </button>
+          </form>
+        </div>
+      )}
+
+      {activeTab === 'history' && (
+        <div className="history-section">
+          <div className="table-container">
+            <table className="billing-table">
+              <thead>
+                <tr>
+                  <th>Kurs</th>
+                  <th>Summa</th>
+                  <th>Sana</th>
+                  <th>Holat</th>
+                </tr>
+              </thead>
+              <tbody>
+                {billingHistory.map(record => (
+                  <tr key={record.id}>
+                    <td>{record.course}</td>
+                    <td>{record.amount} so'm</td>
+                    <td>{record.date}</td>
+                    <td>
+                      <span className={`status ${record.status}`}>
+                        {record.status === 'completed' ? 'To\'langan' : 'Kutilmoqda'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

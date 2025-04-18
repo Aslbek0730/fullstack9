@@ -1,106 +1,88 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FaPaperPlane, FaRobot, FaUser } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaPaperPlane } from 'react-icons/fa';
 import './AIAssistant.css';
 
-const AIHelper = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: 'Salom! Men sizga yordam berishdan xursandman. Savolingizni yozing...',
-      sender: 'ai',
-      timestamp: new Date()
-    }
-  ]);
-  const [inputValue, setInputValue] = useState('');
-  const messagesEndRef = useRef(null);
+const AIAssistant = () => {
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const chatContainerRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  // Auto-scroll to bottom when new messages are added
   useEffect(() => {
-    scrollToBottom();
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
-  const handleSendMessage = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    if (!inputMessage.trim()) return;
 
     // Add user message
     const userMessage = {
-      id: messages.length + 1,
-      text: inputValue,
-      sender: 'user',
-      timestamp: new Date()
+      id: Date.now(),
+      text: inputMessage,
+      sender: 'user'
     };
-
     setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setInputMessage('');
+    setIsLoading(true);
 
-    // Simulate AI response after a short delay
+    // Simulate AI response
     setTimeout(() => {
-      const aiResponse = {
-        id: messages.length + 2,
-        text: 'Bu yerda AI javobi bo\'ladi. Haqiqiy API integratsiyasi qo\'shilganda, bu yerda AI dan kelgan javob ko\'rsatiladi.',
-        sender: 'ai',
-        timestamp: new Date()
+      const aiMessage = {
+        id: Date.now() + 1,
+        text: "Bu yerda AI javobi bo'ladi. Haqiqiy API integratsiyasi qo'shilganda, bu o'rniga haqiqiy javob keladi.",
+        sender: 'ai'
       };
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages(prev => [...prev, aiMessage]);
+      setIsLoading(false);
     }, 1000);
   };
 
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
   return (
-    <div className="ai-helper-container">
-      <div className="ai-helper-header">
-        <h1>AI Yordamchi</h1>
-        <div className="ai-status">
-          <span className="status-dot"></span>
-          <span>Online</span>
-        </div>
-      </div>
-
-      <div className="chat-container">
-        <div className="messages-container">
-          {messages.map(message => (
-            <div 
-              key={message.id} 
-              className={`message ${message.sender === 'user' ? 'user-message' : 'ai-message'}`}
-            >
-              <div className="message-icon">
-                {message.sender === 'user' ? <FaUser /> : <FaRobot />}
-              </div>
-              <div className="message-content">
-                <p>{message.text}</p>
-                <span className="message-time">{formatTime(message.timestamp)}</span>
-              </div>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <form className="input-container" onSubmit={handleSendMessage}>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Savolingizni yozing..."
-            className="message-input"
-          />
-          <button 
-            type="submit" 
-            className="send-button"
-            disabled={!inputValue.trim()}
+    <div className="ai-chat">
+      <div className="chat-container" ref={chatContainerRef}>
+        {messages.map(message => (
+          <div 
+            key={message.id} 
+            className={`message ${message.sender}`}
           >
-            <FaPaperPlane />
-          </button>
-        </form>
+            <div className="message-content">
+              {message.text}
+            </div>
+          </div>
+        ))}
+        {isLoading && (
+          <div className="message ai">
+            <div className="message-content typing">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        )}
       </div>
+
+      <form className="message-form" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          placeholder="Xabar yozing..."
+          className="message-input"
+        />
+        <button 
+          type="submit" 
+          className="send-button"
+          disabled={isLoading}
+        >
+          <FaPaperPlane />
+        </button>
+      </form>
     </div>
   );
 };
 
-export default AIHelper; 
+export default AIAssistant; 

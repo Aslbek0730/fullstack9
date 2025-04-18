@@ -1,86 +1,140 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import './Auth.css';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaGoogle, FaFacebook } from 'react-icons/fa';
+import { useAuth } from '../contexts/AuthContext';
+import { useFeedback } from '../contexts/FeedbackContext';
+import '../styles/Form.css';
 
-function Register() {
-  const navigate = useNavigate();
+const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add your registration logic here
-    navigate('/login');
-  };
+  const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
+  const { showToast } = useFeedback();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      showToast('Parollar mos kelmadi', 'error');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await register(formData.username, formData.email, formData.password);
+      showToast('Muvaffaqiyatli ro\'yxatdan o\'tildi', 'success');
+      navigate('/dashboard');
+    } catch (error) {
+      showToast(error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Ro'yxatdan o'tish</h2>
+        <h2 className="auth-title">Ro'yxatdan o'tish</h2>
+        
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name">Ism</label>
+            <label htmlFor="username" className="form-label">Foydalanuvchi nomi</label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="username"
+              name="username"
+              value={formData.username}
               onChange={handleChange}
+              className="form-input"
               required
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email" className="form-label">Email</label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
+              className="form-input"
               required
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="password">Parol</label>
+            <label htmlFor="password" className="form-label">Parol</label>
             <input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
+              className="form-input"
               required
             />
           </div>
+
           <div className="form-group">
-            <label htmlFor="confirmPassword">Parolni tasdiqlang</label>
+            <label htmlFor="confirmPassword" className="form-label">Parolni tasdiqlang</label>
             <input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
+              className="form-input"
               required
             />
           </div>
-          <button type="submit" className="btn btn-primary w-100">Ro'yxatdan o'tish</button>
+
+          <button
+            type="submit"
+            className="form-submit"
+            disabled={loading}
+          >
+            {loading ? 'Kutilmoqda...' : 'Ro\'yxatdan o\'tish'}
+          </button>
         </form>
-        <p className="auth-footer">
-          Hisobingiz bormi? <Link to="/login">Kirish</Link>
-        </p>
+
+        <div className="social-login">
+          <button className="social-btn google">
+            <FaGoogle className="social-icon" />
+            Google
+          </button>
+          <button className="social-btn facebook">
+            <FaFacebook className="social-icon" />
+            Facebook
+          </button>
+        </div>
+
+        <div className="form-footer">
+          <p>
+            Akkauntingiz bormi?{' '}
+            <Link to="/login" className="form-link">
+              Kirish
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Register;

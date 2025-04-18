@@ -1,1 +1,106 @@
- 
+/* Settings Sections */
+.settings-section {
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--background-white);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: var(--background-light);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.section-header svg {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+}
+
+.section-header h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.section-content {
+  padding: 1.5rem;
+}
+
+/* Toggle Switches */
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 50px;
+  height: 24px;
+  background: var(--border-color);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.toggle-slider:before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--background-white);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--primary-color);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.toggle-label {
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+/* Password Form */
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .section-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .section-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .toggle-label {
+    font-size: 0.875rem;
+  }
+} 

@@ -1,199 +1,244 @@
-import React, { useState } from 'react';
-import { FaCamera, FaUser, FaEnvelope, FaLock, FaHistory, FaChartLine } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { FaUser, FaEnvelope, FaLock, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
+import { useAuth } from '../contexts/AuthContext';
 import './Profile.css';
 
 const Profile = () => {
+  const { user, api } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    currentPassword: '',
-    newPassword: '',
+    name: '',
+    email: '',
+    password: '',
     confirmPassword: ''
   });
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [profileImage, setProfileImage] = useState('https://via.placeholder.com/150');
-  const [activeTab, setActiveTab] = useState('stats');
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        password: '',
+        confirmPassword: ''
+      });
+    }
+  }, [user]);
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.name.trim()) {
+      newErrors.name = 'Ism kiritilishi shart';
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email kiritilishi shart';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Noto\'g\'ri email format';
+    }
+    
+    if (formData.password) {
+      if (formData.password.length < 6) {
+        newErrors.password = 'Parol kamida 6 ta belgidan iborat bo\'lishi kerak';
+      } else if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Parollar mos kelmadi';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  // Sample activity data
-  const activityStats = [
-    { label: 'Kurslar soni', value: 12 },
-    { label: 'Tugallangan testlar', value: 45 },
-    { label: 'O\'rtacha ball', value: '92%' },
-    { label: 'Faol kunlar', value: 156 }
-  ];
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
-  // Sample course history
-  const courseHistory = [
-    { name: 'Python asoslari', date: '2024-01-15', status: 'Tugallandi' },
-    { name: 'Web dasturlash', date: '2024-02-01', status: 'Davom etmoqda' },
-    { name: 'Ma\'lumotlar bazasi', date: '2024-02-20', status: 'Tugallandi' }
-  ];
+    setIsLoading(true);
+    try {
+      const updateData = {
+        name: formData.name,
+        email: formData.email
+      };
+
+      if (formData.password) {
+        updateData.password = formData.password;
+      }
+
+      await api.put('/profile/', updateData);
+      
+      setSuccessMessage('Ma\'lumotlar muvaffaqiyatli saqlandi');
+      setIsEditing(false);
+      setFormData(prev => ({
+        ...prev,
+        password: '',
+        confirmPassword: ''
+      }));
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setErrors({
+        submit: 'Ma\'lumotlarni saqlashda xatolik yuz berdi'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    setErrors({});
+    setSuccessMessage('');
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setFormData({
+      name: user.name || '',
+      email: user.email || '',
+      password: '',
+      confirmPassword: ''
+    });
+    setErrors({});
+    setSuccessMessage('');
+  };
 
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <div className="profile-image-container">
-          <img src={profileImage} alt="Profile" className="profile-image" />
-          <label className="image-upload-btn">
-            <FaCamera />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="image-input"
-            />
-          </label>
-        </div>
-        <h1>{formData.name}</h1>
-        <p className="profile-email">{formData.email}</p>
+        <h1>Profil</h1>
+        {!isEditing ? (
+          <button className="edit-button" onClick={handleEdit}>
+            <FaEdit /> Tahrirlash
+          </button>
+        ) : (
+          <div className="action-buttons">
+            <button className="cancel-button" onClick={handleCancel}>
+              <FaTimes /> Bekor qilish
+            </button>
+            <button 
+              className="save-button" 
+              onClick={handleSubmit}
+              disabled={isLoading}
+            >
+              <FaSave /> {isLoading ? 'Saqlanmoqda...' : 'Saqlash'}
+            </button>
+          </div>
+        )}
       </div>
 
+      {successMessage && (
+        <div className="success-message">
+          {successMessage}
+        </div>
+      )}
+
+      {errors.submit && (
+        <div className="error-message">
+          {errors.submit}
+        </div>
+      )}
+
       <div className="profile-content">
-        <div className="profile-form">
-          <h2>Profil ma`lumotlari</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>
-                <FaUser />
-                Ism
-              </label>
+        <div className="profile-image">
+          <FaUser className="user-icon" />
+          {isEditing && (
+            <div className="image-overlay">
+              <span>Rasmni o'zgartirish</span>
+            </div>
+          )}
+        </div>
+
+        <form className="profile-form">
+          <div className="form-group">
+            <label>
+              <FaUser className="input-icon" />
+              Ism
+            </label>
+            {isEditing ? (
               <input
                 type="text"
                 name="name"
                 value={formData.name}
-                onChange={handleChange}
-                placeholder="Ismingiz"
+                onChange={handleInputChange}
+                className={errors.name ? 'error' : ''}
               />
-            </div>
+            ) : (
+              <div className="profile-info">{user?.name}</div>
+            )}
+            {errors.name && <span className="error-text">{errors.name}</span>}
+          </div>
 
-            <div className="form-group">
-              <label>
-                <FaEnvelope />
-                Email
-              </label>
+          <div className="form-group">
+            <label>
+              <FaEnvelope className="input-icon" />
+              Email
+            </label>
+            {isEditing ? (
               <input
                 type="email"
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
-                placeholder="Email manzilingiz"
+                onChange={handleInputChange}
+                className={errors.email ? 'error' : ''}
               />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <FaLock />
-                Joriy parol
-              </label>
-              <input
-                type="password"
-                name="currentPassword"
-                value={formData.currentPassword}
-                onChange={handleChange}
-                placeholder="Joriy parolingiz"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <FaLock />
-                Yangi parol
-              </label>
-              <input
-                type="password"
-                name="newPassword"
-                value={formData.newPassword}
-                onChange={handleChange}
-                placeholder="Yangi parol"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>
-                <FaLock />
-                Parolni tasdiqlang
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Parolni qayta kiriting"
-              />
-            </div>
-
-            <button type="submit" className="save-btn">
-              Saqlash
-            </button>
-          </form>
-        </div>
-
-        <div className="profile-stats">
-          <div className="stats-tabs">
-            <button
-              className={`tab-btn ${activeTab === 'stats' ? 'active' : ''}`}
-              onClick={() => setActiveTab('stats')}
-            >
-              <FaChartLine /> Statistika
-            </button>
-            <button
-              className={`tab-btn ${activeTab === 'history' ? 'active' : ''}`}
-              onClick={() => setActiveTab('history')}
-            >
-              <FaHistory /> Tarix
-            </button>
+            ) : (
+              <div className="profile-info">{user?.email}</div>
+            )}
+            {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
 
-          {activeTab === 'stats' ? (
-            <div className="stats-grid">
-              {activityStats.map((stat, index) => (
-                <div key={index} className="stat-card">
-                  <span className="stat-value">{stat.value}</span>
-                  <span className="stat-label">{stat.label}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="history-list">
-              {courseHistory.map((course, index) => (
-                <div key={index} className="history-item">
-                  <div className="course-info">
-                    <h3>{course.name}</h3>
-                    <span className="course-date">{course.date}</span>
-                  </div>
-                  <span className={`course-status ${course.status === 'Tugallandi' ? 'completed' : 'in-progress'}`}>
-                    {course.status}
-                  </span>
-                </div>
-              ))}
-            </div>
+          {isEditing && (
+            <>
+              <div className="form-group">
+                <label>
+                  <FaLock className="input-icon" />
+                  Yangi parol
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={errors.password ? 'error' : ''}
+                  placeholder="Parolni o'zgartirmaslik uchun bo'sh qoldiring"
+                />
+                {errors.password && <span className="error-text">{errors.password}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaLock className="input-icon" />
+                  Parolni tasdiqlang
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  className={errors.confirmPassword ? 'error' : ''}
+                />
+                {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
+              </div>
+            </>
           )}
-        </div>
+        </form>
       </div>
     </div>
   );

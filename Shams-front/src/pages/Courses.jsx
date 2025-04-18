@@ -1,73 +1,73 @@
-import { useState } from 'react';
-import { FaSearch, FaBook, FaClock, FaUserGraduate } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaSearch, FaFilter } from 'react-icons/fa';
 import './Courses.css';
 
-function Courses() {
+const Courses = () => {
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [priceRange, setPriceRange] = useState('all');
+  const [level, setLevel] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  // Sample categories
-  const categories = [
-    { id: 'all', name: 'Barchasi' },
-    { id: 'programming', name: 'Dasturlash' },
-    { id: 'design', name: 'Dizayn' },
-    { id: 'business', name: 'Biznes' },
-    { id: 'language', name: 'Tillar' },
-  ];
-
-  // Sample courses data
+  // Mock data - replace with actual API data
   const courses = [
     {
       id: 1,
-      title: 'Web Dasturlash Asoslari',
-      description: 'HTML, CSS va JavaScript asoslarini o\'rganing',
-      category: 'programming',
-      duration: '8 hafta',
-      students: 1200,
-      image: 'https://via.placeholder.com/300x200',
+      title: 'Python Dasturlash',
+      image: '/images/courses/python.jpg',
+      category: 'Dasturlash',
+      level: 'Beginner',
+      price: 'Bepul',
+      description: 'Python dasturlash tilini o\'rganing',
     },
     {
       id: 2,
-      title: 'UI/UX Dizayn',
-      description: 'Zamonaviy interfeyslar yaratish san\'ati',
-      category: 'design',
-      duration: '6 hafta',
-      students: 850,
-      image: 'https://via.placeholder.com/300x200',
+      title: 'Web Dasturlash',
+      image: '/images/courses/web.jpg',
+      category: 'Web',
+      level: 'Advanced',
+      price: 'Premium',
+      description: 'Modern web dasturlash texnologiyalari',
     },
-    {
-      id: 3,
-      title: 'Biznes Menejmenti',
-      description: 'Biznesni boshqarish va rivojlantirish',
-      category: 'business',
-      duration: '10 hafta',
-      students: 650,
-      image: 'https://via.placeholder.com/300x200',
-    },
-    {
-      id: 4,
-      title: 'Ingliz Tili',
-      description: 'Ingliz tilini professional darajada o\'rganing',
-      category: 'language',
-      duration: '12 hafta',
-      students: 2000,
-      image: 'https://via.placeholder.com/300x200',
-    },
+    // Add more courses...
   ];
 
-  // Filter courses based on search and category
+  const categories = [
+    { id: 'all', name: 'Barchasi' },
+    { id: 'programming', name: 'Dasturlash' },
+    { id: 'web', name: 'Web' },
+    { id: 'mobile', name: 'Mobil' },
+    { id: 'ai', name: 'Sun\'iy Intellekt' },
+  ];
+
+  const levels = [
+    { id: 'all', name: 'Barchasi' },
+    { id: 'beginner', name: 'Beginner' },
+    { id: 'intermediate', name: 'O\'rta' },
+    { id: 'advanced', name: 'Advanced' },
+  ];
+
+  const priceRanges = [
+    { id: 'all', name: 'Barchasi' },
+    { id: 'free', name: 'Bepul' },
+    { id: 'premium', name: 'Premium' },
+  ];
+
   const filteredCourses = courses.filter(course => {
+    const matchesCategory = activeCategory === 'all' || course.category === activeCategory;
+    const matchesLevel = level === 'all' || course.level === level;
+    const matchesPrice = priceRange === 'all' || course.price === priceRange;
     const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          course.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || course.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    
+    return matchesCategory && matchesLevel && matchesPrice && matchesSearch;
   });
 
   return (
-    <div className="courses-container">
+    <div className="courses-page">
       <div className="courses-header">
         <h1>Kurslar</h1>
-        <div className="search-box">
+        <div className="search-bar">
           <FaSearch className="search-icon" />
           <input
             type="text"
@@ -78,40 +78,78 @@ function Courses() {
         </div>
       </div>
 
-      <div className="category-filters">
-        {categories.map(category => (
-          <button
-            key={category.id}
-            className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(category.id)}
-          >
-            {category.name}
-          </button>
-        ))}
-      </div>
-
-      <div className="courses-grid">
-        {filteredCourses.map(course => (
-          <div key={course.id} className="course-card">
-            <div className="course-image">
-              <img src={course.image} alt={course.title} />
-            </div>
-            <div className="course-content">
-              <h3>{course.title}</h3>
-              <p>{course.description}</p>
-              <div className="course-meta">
-                <span><FaClock /> {course.duration}</span>
-                <span><FaUserGraduate /> {course.students} o`quvchi</span>
-              </div>
-              <button className="continue-btn">
-                <FaBook /> Davom etish
-              </button>
+      <div className="courses-container">
+        <div className="filters-sidebar">
+          <div className="filter-section">
+            <h3>Kategoriya</h3>
+            <div className="filter-options">
+              {categories.map(category => (
+                <button
+                  key={category.id}
+                  className={`filter-btn ${activeCategory === category.id ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(category.id)}
+                >
+                  {category.name}
+                </button>
+              ))}
             </div>
           </div>
-        ))}
+
+          <div className="filter-section">
+            <h3>Daraja</h3>
+            <div className="filter-options">
+              {levels.map(lvl => (
+                <button
+                  key={lvl.id}
+                  className={`filter-btn ${level === lvl.id ? 'active' : ''}`}
+                  onClick={() => setLevel(lvl.id)}
+                >
+                  {lvl.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-section">
+            <h3>Narx</h3>
+            <div className="filter-options">
+              {priceRanges.map(range => (
+                <button
+                  key={range.id}
+                  className={`filter-btn ${priceRange === range.id ? 'active' : ''}`}
+                  onClick={() => setPriceRange(range.id)}
+                >
+                  {range.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="courses-grid">
+          {filteredCourses.map(course => (
+            <div key={course.id} className="course-card">
+              <div className="course-image">
+                <img src={course.image} alt={course.title} />
+                <div className="course-level">{course.level}</div>
+              </div>
+              <div className="course-content">
+                <h3>{course.title}</h3>
+                <p>{course.description}</p>
+                <div className="course-meta">
+                  <span className="course-category">{course.category}</span>
+                  <span className="course-price">{course.price}</span>
+                </div>
+                <Link to={`/course/${course.id}`} className="course-btn">
+                  Boshlash
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default Courses;

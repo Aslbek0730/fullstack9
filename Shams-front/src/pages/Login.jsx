@@ -7,27 +7,65 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     try {
-      // Here you would typically make an API call to your backend
-      // For now, we'll just simulate a successful login
-      const userData = {
-        id: '1',
-        username: username,
-        name: 'Test User',
-        role: 'student'
-      };
+      const response = await fetch('http://localhost:8000/api/token/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Login failed');
+      }
+
+      // Store the tokens in localStorage
+      localStorage.setItem('access_token', data.access);
+      localStorage.setItem('refresh_token', data.refresh);
       
-      login(userData);
+      // Get user data
+      const userResponse = await fetch('http://localhost:8000/api/profile/', {
+        headers: {
+          'Authorization': `Bearer ${data.access}`,
+          'Accept': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      const userData = await userResponse.json();
+
+      if (!userResponse.ok) {
+        throw new Error('Failed to get user data');
+      }
+
+      // Update auth context with user data
+      login({
+        ...userData,
+        token: data.access,
+      });
+      
       navigate('/dashboard');
     } catch (err) {
-      setError('Login failed. Please check your credentials.');
+      setError(err.message || 'Login failed. Please check your credentials.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,6 +83,8 @@ function Login() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
+              disabled={isLoading}
+              placeholder="Foydalanuvchi nomini kiriting"
             />
           </div>
           <div className="form-group">
@@ -55,10 +95,16 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading}
+              placeholder="Parolni kiriting"
             />
           </div>
-          <button type="submit" className="login-btn">
-            Kirish
+          <button 
+            type="submit" 
+            className="login-btn"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Kirilmoqda...' : 'Kirish'}
           </button>
         </form>
         <p className="register-link">

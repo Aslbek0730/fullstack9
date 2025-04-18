@@ -1,33 +1,43 @@
-import { useNavigate } from 'react-router-dom';
-import { BsBell } from 'react-icons/bs';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import ThemeToggle from './ThemeToggle';
 import './Navbar.css';
 
-function Navbar() {
-  const navigate = useNavigate();
-  const userName = "John Doe"; // This should come from your auth context/state
-
-  const handleLogout = () => {
-    // Implement logout logic here
-    navigate('/login');
-  };
+const Navbar = () => {
+  const { user, logout } = useAuth();
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">
-        <h1>Shams Akademiyasi</h1>
-      </div>
-      <div className="navbar-items">
-        <div className="notification-icon">
-          <BsBell size={20} />
-          <span className="notification-badge">3</span>
+      <div className="navbar-container">
+        <Link to="/" className="navbar-logo">
+          Shams Academy
+        </Link>
+
+        <div className="navbar-right">
+          <ThemeToggle />
+          
+          {user ? (
+            <div className="navbar-user">
+              <span className="navbar-username">{user.username}</span>
+              <button onClick={logout} className="navbar-logout">
+                Chiqish
+              </button>
+            </div>
+          ) : (
+            <div className="navbar-auth">
+              <Link to="/login" className="navbar-link">
+                Kirish
+              </Link>
+              <Link to="/register" className="navbar-link navbar-link-primary">
+                Ro'yxatdan o'tish
+              </Link>
+            </div>
+          )}
         </div>
-        <span className="user-name">{userName}</span>
-        <button className="logout-btn" onClick={handleLogout}>
-          Chiqish
-        </button>
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;
