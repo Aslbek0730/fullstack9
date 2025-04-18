@@ -1,0 +1,36 @@
+.tests {
+  padding: 2rem;
+}
+
+.tests-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.test-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.test-card h3 {
+  margin-bottom: 1rem;
+}
+
+.test-card p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.test-info span {
+  color: #667eea;
+  font-weight: 500;
+}

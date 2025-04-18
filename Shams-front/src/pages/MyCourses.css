@@ -1,0 +1,46 @@
+.my-courses {
+  padding: 2rem;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.course-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.course-progress {
+  margin-bottom: 1.5rem;
+}
+
+.progress {
+  height: 0.5rem;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #667eea;
+  transition: width 0.3s ease;
+  text-align: center;
+  color: white;
+  font-size: 0.75rem;
+  line-height: 0.5rem;
+}
+
+.course-card h3 {
+  margin-bottom: 1rem;
+}
+
+.course-card p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
