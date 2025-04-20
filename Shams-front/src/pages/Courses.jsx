@@ -68,13 +68,13 @@ const Courses = () => {
       <div className="courses-header">
         <h1>Kurslar</h1>
         <div className="search-bar">
-          <FaSearch className="search-icon" />
-          <input
+          {/* <FaSearch className="search-icon" /> */}
+          {/* <input
             type="text"
             placeholder="Kurslarni qidirish..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          /> */}
         </div>
       </div>
 

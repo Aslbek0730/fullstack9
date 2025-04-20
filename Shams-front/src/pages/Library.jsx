@@ -59,12 +59,12 @@ const Library = () => {
       <div className="library-header">
         <h1>Kutubxona</h1>
         <div className="search-bar">
-          <input
+          {/* <input
             type="text"
             placeholder="Kitoblarni qidirish..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          /> */}
         </div>
       </div>
 

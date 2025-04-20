@@ -1,43 +1,59 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { BsBoxArrowRight } from 'react-icons/bs';
 import { useAuth } from '../contexts/AuthContext';
-import ThemeToggle from './ThemeToggle';
 import './Navbar.css';
 
-const Navbar = () => {
+function Navbar() {
   const { user, logout } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        <Link to="/" className="navbar-logo">
-          Shams Academy
-        </Link>
-
-        <div className="navbar-right">
-          <ThemeToggle />
-          
-          {user ? (
-            <div className="navbar-user">
-              <span className="navbar-username">{user.username}</span>
-              <button onClick={logout} className="navbar-logout">
-                Chiqish
-              </button>
-            </div>
-          ) : (
-            <div className="navbar-auth">
-              <Link to="/login" className="navbar-link">
-                Kirish
-              </Link>
-              <Link to="/register" className="navbar-link navbar-link-primary">
-                Ro'yxatdan o'tish
-              </Link>
-            </div>
-          )}
+    <nav className={`nav ${isScrolled ? 'affix' : ''}`}>
+      <div className="container">
+        <div className="logo">
+          <Link to="/">Shams Academy</Link>
         </div>
+        <div className={`main_list ${isMenuOpen ? 'show_list' : ''}`}>
+          <ul className="navlinks">
+            <li><Link to="/library">Kutubxona</Link></li>
+            <li><Link to="/tests">Testlar</Link></li>
+            {user && (
+              <li>
+                <button className="logout-btn" onClick={logout}>
+                  <BsBoxArrowRight size={20} />
+                  <span>Chiqish</span>
+                </button>
+              </li>
+            )}
+          </ul>
+        </div>
+        <span className={`navTrigger ${isMenuOpen ? 'active' : ''}`} onClick={toggleMenu}>
+          <i></i>
+          <i></i>
+          <i></i>
+        </span>
       </div>
     </nav>
   );
-};
+}
 
 export default Navbar;
