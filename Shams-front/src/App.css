@@ -166,3 +166,8 @@ body {
 
 /* Bootstrap import */
 @import 'bootstrap/dist/css/bootstrap.min.css';
+
+.app {
+  display: flex;
+  min-height: 100vh;
+}

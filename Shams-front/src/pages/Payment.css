@@ -277,4 +277,251 @@ input.error {
   .add-card-form {
     padding: 1rem;
   }
+}
+
+.payment {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0f7fa, #f5f5dc, #ffe4e1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Aurora background */
+.payment::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(224, 247, 250, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 228, 225, 0.3) 0%, transparent 50%);
+  animation: aurora 20s infinite alternate;
+  z-index: 0;
+}
+
+/* Payment form */
+.payment-form {
+  position: relative;
+  z-index: 1;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: var(--spacing);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-light);
+}
+
+/* Card input */
+.card-input {
+  padding: var(--spacing);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius);
+  margin-bottom: var(--spacing);
+  transition: var(--transition);
+}
+
+.card-input:focus-within {
+  box-shadow: var(--neon-light);
+}
+
+/* Payment methods */
+.payment-methods {
+  display: flex;
+  gap: var(--spacing);
+  margin-bottom: var(--spacing);
+}
+
+.payment-method {
+  flex: 1;
+  padding: var(--spacing);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.payment-method::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: payment-glow 2s infinite;
+}
+
+@keyframes payment-glow {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.payment-method:hover {
+  transform: translateY(-5px);
+}
+
+.payment-method.payme {
+  border: 2px solid #00aeef;
+}
+
+.payment-method.payme::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 174, 239, 0.1);
+  animation: payme-pulse 2s infinite;
+}
+
+@keyframes payme-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 174, 239, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 174, 239, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 174, 239, 0);
+  }
+}
+
+.payment-method.click {
+  border: 2px solid #ff6b00;
+}
+
+.payment-method.click::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 107, 0, 0.1);
+  animation: click-pulse 2s infinite;
+}
+
+@keyframes click-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 107, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 0, 0);
+  }
+}
+
+.payment-method.uzum {
+  border: 2px solid #7c4dff;
+}
+
+.payment-method.uzum::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(124, 77, 255, 0.1);
+  animation: uzum-pulse 2s infinite;
+}
+
+@keyframes uzum-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(124, 77, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(124, 77, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 77, 255, 0);
+  }
+}
+
+/* Submit button */
+.submit-button {
+  width: 100%;
+  padding: var(--spacing);
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(45deg, var(--primary-light), var(--secondary-light));
+  color: white;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--neon-light);
+}
+
+.submit-button:active {
+  animation: spiral 0.5s ease-in-out;
+}
+
+@keyframes spiral {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(0.95) rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+/* Dark mode styles */
+.dark-mode .payment {
+  background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+}
+
+.dark-mode .payment::before {
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(106, 17, 203, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(37, 117, 252, 0.3) 0%, transparent 50%);
+}
+
+.dark-mode .payment-form {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .card-input {
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-dark);
+}
+
+.dark-mode .payment-method {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .payment-form {
+    padding: calc(var(--spacing) / 2);
+  }
+
+  .payment-methods {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-input {
+    padding: calc(var(--spacing) / 2);
+  }
 } 

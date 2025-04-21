@@ -23,6 +23,7 @@ import { FeedbackProvider } from './contexts/FeedbackContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import './styles/global.css';
 import './App.css';
+import { useState } from 'react';
 
 // Protected Route wrapper component
 const ProtectedRoute = ({ children }) => {
@@ -40,16 +41,24 @@ const ProtectedRoute = ({ children }) => {
 };
 
 // Layout wrapper for authenticated routes
-const AuthLayout = ({ children }) => (
-  <div className="app-container">
-    <Sidebar />
-    <div className="main-content">
-      <Navbar />
-      {children}
-      <Footer />
+const AuthLayout = ({ children }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const handleSidebarToggle = (isOpen) => {
+    setIsSidebarOpen(isOpen);
+  };
+
+  return (
+    <div className="app-container">
+      <Sidebar onToggle={handleSidebarToggle} />
+      <div className="main-content">
+        <Navbar isSidebarOpen={isSidebarOpen} />
+        {children}
+        <Footer isSidebarOpen={isSidebarOpen} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 function App() {
   return (
